@@ -28,8 +28,9 @@ jobs:
           # 覆盖默认的 'tools'（新版 SDK 已移除该包，会导致失败）
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
 
+      # 可选：在仓库 Settings → Secrets 中配置默认服务器地址。
+      # 未配置时写入空值，构建仍可正常进行。
       - name: Inject optional default endpoints
-        if: ${{ secrets.FRP_DEFAULT_API_URL != '' }}
         run: |
           echo "frp.defaultApiUrl=${{ secrets.FRP_DEFAULT_API_URL }}" >> local.properties
           echo "frp.defaultRpcUrl=${{ secrets.FRP_DEFAULT_RPC_URL }}" >> local.properties
