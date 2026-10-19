@@ -55,7 +55,19 @@
 
 推送到 `v*` 标签或手动触发 `workflow_dispatch` 时，GitHub Actions 会自动构建 release APK 并上传为产物（tag 构建还会附带发布到 Release）。
 
+## 🩹 关于域名 / DNS
+
+frp-panel 是 Go 静态二进制，使用纯 Go 的 DNS 解析器。它依赖 `/etc/resolv.conf`，
+而 Android 既没有这个文件、也没有本地 DNS，因此**所有域名都会解析失败**
+（报错形如 `lookup xxx on [::1]:53: read: udp ... connection refused`），只有 IP 地址能用。
+
+本仓库已对内置二进制打了补丁：把其中硬编码的 DNS 回退地址 `127.0.0.1:53`
+原地替换为公共 DNS `223.5.5.5:53`（等长替换，不改变文件结构）。
+补丁脚本见 [`tools/patch_frp_panel_dns.py`](tools/patch_frp_panel_dns.py)，
+升级 frp-panel 版本后需要重新执行。
+
 ## ⚠️ 限制
 
 - 仅支持 **arm64-v8a** 设备。
 - 该仓库体积较大（内嵌约 65 MB 的可执行文件）。
+- 内置二进制为打过 DNS 补丁的版本，DNS 回退使用 `223.5.5.5`。
