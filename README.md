@@ -66,6 +66,20 @@ frp-panel 是 Go 静态二进制，使用纯 Go 的 DNS 解析器。它依赖 `/
 补丁脚本见 [`tools/patch_frp_panel_dns.py`](tools/patch_frp_panel_dns.py)，
 升级 frp-panel 版本后需要重新执行。
 
+## 🩹 关于 workerd 工作目录
+
+frp-panel 默认把 workerd 工作目录设为 `/tmp/frpp/workerd`。Android 应用沙箱里 `/tmp`
+不可写，会直接报：
+
+```
+fatal: mkdir /tmp/frpp: permission denied
+create work dir failed, path: [/tmp/frpp/workerd]
+```
+
+应用启动子进程时已通过环境变量
+`CLIENT_WORKER_WORKERD_WORK_DIR`（cleanenv 的 `CLIENT_` + `WORKER_` + `WORKERD_WORK_DIR`）
+把它改到应用私有目录下的 `workerd/`，因此不受影响。
+
 ## ⚠️ 限制
 
 - 仅支持 **arm64-v8a** 设备。

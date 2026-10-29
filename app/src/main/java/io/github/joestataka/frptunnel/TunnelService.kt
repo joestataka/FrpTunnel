@@ -80,6 +80,11 @@ class TunnelService : Service() {
             pb.directory(filesDir)
             pb.environment()["HOME"] = filesDir.absolutePath
             pb.environment()["TMPDIR"] = cacheDir.absolutePath
+            // frp-panel 默认把 workerd 工作目录设为 /tmp/frpp/workerd，
+            // 而 Android 应用沙箱里 /tmp 不可写，会导致启动即 fatal。
+            // 该配置项的 cleanenv 变量名为 CLIENT_ + WORKER_ + WORKERD_WORK_DIR。
+            pb.environment()["CLIENT_WORKER_WORKERD_WORK_DIR"] =
+                File(filesDir, "workerd").absolutePath
             val proc = pb.start()
             process = proc
             Log.i(TAG, "process started")
